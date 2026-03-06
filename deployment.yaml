@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travel-multi-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: travel-multi-agent
+  template:
+    metadata:
+      labels:
+        app: travel-multi-agent
+    spec:
+      serviceAccountName: vertex-sa
+      containers:
+      - name: agent-container
+        imagePullPolicy: Always
+        image: us-central1-docker.pkg.dev/jeffluoo-gke-dev/adk-repo/travel-multi-agent:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        - name: GOOGLE_CLOUD_PROJECT
+          value: jeffluoo-gke-dev
+        - name: GOOGLE_CLOUD_LOCATION
+          value: us-central1
+        - name: GOOGLE_GENAI_USE_VERTEXAI
+          value: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: travel-multi-agent
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: travel-multi-agent
