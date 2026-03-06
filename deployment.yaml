@@ -13,6 +13,8 @@ spec:
         app: travel-multi-agent
     spec:
       serviceAccountName: vertex-sa
+      nodeSelector:
+        iam.gke.io/gke-metadata-server-enabled: "true"
       containers:
       - name: agent-container
         imagePullPolicy: Always
